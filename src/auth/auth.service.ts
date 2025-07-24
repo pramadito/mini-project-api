@@ -1,9 +1,11 @@
-import { ApiError } from "../../utils/api-error";
-import { JwtService } from "../jwt/jwt.service";
+import { ApiError } from "../utils/api-error";
+import { JwtService } from "../modules/jwt/jwt.service";
 import { PasswordService } from "../password/password.service";
-import { PrismaService } from "../prisma/prisma.service";
+import { PrismaService } from "../modules/prisma/prisma.service";
 import { LoginDTO } from "./dto/login.dto";
 import { RegisterDTO } from "./dto/register.dto";
+
+
 
 export class AuthService {
   private prisma: PrismaService;
@@ -33,6 +35,8 @@ export class AuthService {
         name: body.name,
         email: body.email,
         password: hashedPassword,
+        referredBy: body.referredBy,
+        // add referredBy if provided
       },
       omit: { password: true },
     });
