@@ -16,3 +16,117 @@ model Sample {
 
   @@map("samples")
 }
+
+model User {
+  id              Int            @id @default(autoincrement())
+  email           String         @unique
+  password        String
+  name            String
+  profilePicture  String?
+  role            Role           @default(CUSTOMER)
+  referralCode    String         @unique
+  referredBy      String?
+  points          Point[]
+  coupons         Coupon[]
+  organizedEvents Event[]        @relation("OrganizedEvents")
+  tickets         Ticket[]
+  transactions    Transaction[]   @relation("UserTransactions")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  resetToken      String?
+  resetTokenExp   DateTime?
+
+  @@map("users")
+}
+
+model Point {
+  id          Int       @id @default(autoincrement())
+  amount      Int
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  earnedAt    DateTime  @default(now())
+  expiresAt   DateTime
+  isUsed      Boolean   @default(false)
+  source      String    // "REFERRAL" or other sources
+
+  @@map("points")
+}
+
+model Coupon {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  discount    Float
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  validFrom   DateTime  @default(now())
+  validUntil  DateTime
+  isUsed      Boolean   @default(false)
+  source      String    // "REFERRAL" or other sources
+
+  @@map("coupons")
+}
+
+model Event {
+  id              Int            @id @default(autoincrement())
+  title           String
+  description     String
+  location        String
+  startDate       DateTime
+  endDate         DateTime
+  organizerId     Int
+  organizer       User           @relation(fields: [organizerId], references: [id], name: "OrganizedEvents")
+  tickets         Ticket[]
+  totalSeats      Int
+  availableSeats  Int
+  price           Float
+  category        String
+  imageUrl        String?
+  isPublished     Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  transactions    Transaction[]  @relation("EventTransactions")
+
+  @@map("events")
+}
+
+model Ticket {
+  id          Int       @id @default(autoincrement())
+  eventId     Int
+  event       Event     @relation(fields: [eventId], references: [id])
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  quantity    Int
+  totalPrice  Float
+  createdAt   DateTime  @default(now())
+
+  @@map("tickets")
+}
+
+model Transaction {
+  id              Int             @id @default(autoincrement())
+  userId          Int
+  user            User            @relation(fields: [userId], references: [id], name: "UserTransactions")
+  eventId         Int
+  event           Event           @relation(fields: [eventId], references: [id], name: "EventTransactions")
+  amount          Float
+  status          TransactionStatus @default(PENDING)
+  paymentProof    String?
+  couponUsed      String?
+  pointsUsed      Int?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@map("transactions")
+}
+
+enum Role {
+  CUSTOMER
+  ORGANIZER
+  ADMIN
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
