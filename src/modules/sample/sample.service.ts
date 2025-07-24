@@ -3,6 +3,7 @@ import { PrismaService } from "../prisma/prisma.service";
 
 export class SampleService {
   private prisma: PrismaService;
+
   constructor() {
     this.prisma = new PrismaService();
   }
@@ -22,7 +23,3 @@ export class SampleService {
     return sample;
   };
 }
-
-// PascalCase -> interface, type and class
-// camelCase -> function & variable
-// snake_case -> penamaan table
