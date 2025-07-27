@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, IsIn } from "class-validator";
 
 export class RegisterDTO {
   @IsNotEmpty()
@@ -13,10 +13,16 @@ export class RegisterDTO {
   @IsString()
   password!: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // confirmPassword!: string;
-
   @IsString()
   referredBy?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(['CUSTOMER', 'ORGANIZER', 'ADMIN'], { 
+    message: 'Role must be one of: CUSTOMER, ORGANIZER, ADMIN' 
+  })
+  role!: 'CUSTOMER' | 'ORGANIZER' | 'ADMIN';
+
+  @IsString()
+  referralCode?: string;
 }
