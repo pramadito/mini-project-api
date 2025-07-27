@@ -109,7 +109,7 @@ model Transaction {
   eventId         Int
   event           Event           @relation(fields: [eventId], references: [id], name: "EventTransactions")
   amount          Float
-  status          TransactionStatus @default(PENDING)
+  status          TransactionStatus @default(WAITING_FOR_PAYMENT)
   paymentProof    String?
   couponUsed      String?
   pointsUsed      Int?
@@ -126,7 +126,9 @@ enum Role {
 }
 
 enum TransactionStatus {
-  PENDING
-  APPROVED
-  REJECTED
+  WAITING_FOR_PAYMENT
+  WAITING_FOR_CONFIRMATION
+  PAID
+  REJECT
+  EXPIRED
 }
