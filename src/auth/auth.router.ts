@@ -2,7 +2,7 @@ import { Router } from "express";
 import { AuthController } from "./auth.controller";
 import { Validate, validate } from "class-validator";
 import { RegisterDTO } from "./dto/register.dto";
-import { validateBody } from "../../middlewares/validate.middleware";
+import { validateBody } from "../middlewares/validation.middleware";
 import { LoginDTO } from "./dto/login.dto";
 
 export class AuthRouter {
