@@ -1,6 +1,6 @@
 import { ApiError } from "../utils/api-error";
 import { JwtService } from "../modules/jwt/jwt.service";
-import { PasswordService } from "../password/password.service";
+import { PasswordService } from "../modules/password/password.service";
 import { PrismaService } from "../modules/prisma/prisma.service";
 import { LoginDTO } from "./dto/login.dto";
 import { RegisterDTO } from "./dto/register.dto";
