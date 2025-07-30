@@ -1,7 +1,9 @@
 import { Prisma } from "../../generated/prisma";
+import { ApiError } from "../../utils/api-error";
 import { PaginationQueryParams } from "../pagination/dto/pagination.dto";
 import { PrismaService } from "../prisma/prisma.service";
 import { GetEventsDTO } from "./dto/get-events.dto";
+import { getEventDTO } from "./dto/get-event.dto";
 
 export class EventService {
   private prisma: PrismaService;
@@ -34,4 +36,15 @@ export class EventService {
       meta: { page, take, total },
     };
   };
+  getEvent = async (body: getEventDTO) => {
+  const article = await this.prisma.event.findFirst({
+    where: {},
+  });
+
+  if(!article) {
+    throw new ApiError("user no found", 404);
+  }
+
+  return article
+};
 }
