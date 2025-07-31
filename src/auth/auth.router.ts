@@ -4,14 +4,19 @@ import { Validate, validate } from "class-validator";
 import { RegisterDTO } from "./dto/register.dto";
 import { validateBody } from "../middlewares/validation.middleware";
 import { LoginDTO } from "./dto/login.dto";
+import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
+import { ResetPasswordDTO } from "./dto/reset-password.dto";
+import { JwtMiddleware } from "../middlewares/jwt.middleware";
 
 export class AuthRouter {
   private router: Router;
   private authController: AuthController;
+  private jwtMiddleware: JwtMiddleware;
 
   constructor() {
     this.router = Router();
     this.authController = new AuthController();
+    this.jwtMiddleware = new JwtMiddleware();
     this.initializedRoutes();
   }
 
@@ -25,6 +30,17 @@ export class AuthRouter {
       "/login",
       validateBody(LoginDTO),
       this.authController.login
+    );
+     this.router.post(
+      "/forgot-password",
+      validateBody(ForgotPasswordDTO),
+      this.authController.forgotPassword
+    );
+    this.router.patch(
+      "/reset-password",
+      this.jwtMiddleware.verifyToken(process.env.JWT_SECRET_RESET!),
+      validateBody(ResetPasswordDTO),
+      this.authController.resetPassword
     );
   };
 
