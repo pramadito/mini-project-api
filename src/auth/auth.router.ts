@@ -7,6 +7,7 @@ import { LoginDTO } from "./dto/login.dto";
 import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
 import { ResetPasswordDTO } from "./dto/reset-password.dto";
 import { JwtMiddleware } from "../middlewares/jwt.middleware";
+import { UpdateUserDTO } from "./dto/update-user.dto";
 
 export class AuthRouter {
   private router: Router;
@@ -41,6 +42,12 @@ export class AuthRouter {
       this.jwtMiddleware.verifyToken(process.env.JWT_SECRET_RESET!),
       validateBody(ResetPasswordDTO),
       this.authController.resetPassword
+    );
+    this.router.patch(
+      "/update-user",
+      this.jwtMiddleware.verifyToken(process.env.JWT_SECRET!),
+      validateBody(UpdateUserDTO),
+      this.authController.updateUser
     );
   };
 

@@ -7,6 +7,7 @@ import { RegisterDTO } from "./dto/register.dto";
 import { MailService } from "../modules/mail/mail.service";
 import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
 import { ResetPasswordDTO } from "./dto/reset-password.dto";
+import { UpdateUserDTO } from "./dto/update-user.dto";
 
 export class AuthService {
   private prisma: PrismaService;
@@ -202,5 +203,40 @@ export class AuthService {
     });
 
     return { message: "reset password success" };
+  };
+
+  updateUser = async (body: Partial<UpdateUserDTO>, authUserId: number) => {
+     // Create update data object with only the fields that are provided
+    const updateData: Partial<UpdateUserDTO> = {};
+    
+    // Only include fields that are actually provided in the body
+    if (body.name !== undefined) updateData.name = body.name;
+    if (body.email !== undefined) updateData.email = body.email;
+    if (body.profilePicture !== undefined) updateData.profilePicture = body.profilePicture;
+    
+    // Handle password separately
+    if (body.password !== undefined) {
+      updateData.password = await this.passwordService.hashPassword(body.password);
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: authUserId },
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        profilePicture: true,
+        createdAt: true,
+        updatedAt: true,
+        // Include other fields you want to return
+        // Explicitly exclude password and other sensitive fields
+      },
+    });
+
+    return {
+      message: "User updated successfully",
+      data: updatedUser,
+    };
   };
 }
