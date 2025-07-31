@@ -15,24 +15,18 @@ export class EventService {
   }
 
   getEvents = async (query: GetEventsDTO) => {
-    const { take, page, sortBy, sortOrder, search } = query;
+    const { take, page, sortBy, sortOrder, search, category } = query;
 
     const whereClause: Prisma.EventWhereInput = {};
 
     if (search) {
       whereClause.title = { contains: search, mode: "insensitive" };
     }
-    //    getEventBySlug = async ( slug: string) => {
-    //   const blog = await this.prisma.event.findFirst({
-    //     where: { slug },
-    //   });
 
-    //   if (!event) {
-    //     throw new ApiError("Event not found", 404);
-    //   }
-
-    //   return event;
-    // };
+    if (category) {
+      whereClause.category = category;
+    }
+   
 
     const events = await this.prisma.event.findMany({
       where: whereClause,
