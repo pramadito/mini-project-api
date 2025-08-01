@@ -27,5 +27,10 @@ export class AuthController {
     const result = await this.authService.resetPassword(req.body, authUserId);
     res.status(200).send(result);
   };
+  updateUser = async (req: Request, res: Response) => {
+    const authUserId = res.locals.user.id;
+    const result = await this.authService.updateUser(req.body, authUserId);
+    res.status(200).send(result);
+  };
  
 }
