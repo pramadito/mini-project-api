@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { JwtMiddleware } from "../../middlewares/jwt.middleware";
+import { UploaderMiddleware } from "../../middlewares/uploader.middleware";
 import { validateBody } from "../../middlewares/validation.middleware";
 import { CreateTransactionDTO } from "./dto/create-transaction.dto";
-import { TransactionController } from "./transaction.controller";
-import { uploadPaymentProofDTO } from "./dto/upload-payment-proof.dto";
-import { UploaderMiddleware } from "../../middlewares/uploader.middleware";
 import { UpdateTransactionDTO } from "./dto/update-transaction.dto";
+import { uploadPaymentProofDTO } from "./dto/upload-payment-proof.dto";
+import { TransactionController } from "./transaction.controller";
 
 export class TransactionRouter {
   private router: Router;
@@ -14,9 +14,9 @@ export class TransactionRouter {
   private uploaderMiddleware: UploaderMiddleware;
   constructor() {
     this.router = Router();
-    this.transactionController = new TransactionController();
     this.jwtMiddleWare = new JwtMiddleware();
     this.uploaderMiddleware = new UploaderMiddleware();
+    this.transactionController = new TransactionController();
     this.intializeRoutes();
   }
 

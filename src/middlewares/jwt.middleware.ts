@@ -26,7 +26,7 @@ export class JwtMiddleware {
       });
     };
   };
-    verifyRole = (roles: Role[]) => {
+  verifyRole = (roles: Role[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
       const userRole = res.locals.user.role;
 

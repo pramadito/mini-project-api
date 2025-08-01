@@ -57,7 +57,6 @@ export class TransactionService {
         data: { 
           userId: authUserId,
           status: "WAITING_FOR_PAYMENT",
-          amount: 500,
           eventId: 1,
           },
         include:{user:true}

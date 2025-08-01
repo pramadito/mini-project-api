@@ -1,11 +1,12 @@
 import cors from "cors";
 import express, { Express } from "express";
+import "reflect-metadata";
+import { AuthRouter } from "./modules/auth/auth.router";
 import { PORT } from "./config/env";
 import { errorMiddleware } from "./middlewares/error.middleware";
-import { SampleRouter } from "./modules/sample/sample.router";
-import { AuthRouter } from "./auth/auth.router";
 import { EventRouter } from "./modules/events/event.router";
-
+import { SampleRouter } from "./modules/sample/sample.router";
+import { TransactionRouter } from "./modules/transaction/transaction.router";
 
 export class App {
   app: Express;
@@ -26,11 +27,12 @@ export class App {
     const sampleRouter = new SampleRouter();
     const eventRouter = new EventRouter();
     const authRouter = new AuthRouter();
+    const transactionRouter = new TransactionRouter();
 
     this.app.use("/sample", sampleRouter.getRoutes());
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/events", eventRouter.getRouter());
-
+    this.app.use("/transactions", transactionRouter.getRouter());
   }
 
   private handleError() {
