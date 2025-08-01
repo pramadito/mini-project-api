@@ -2,11 +2,11 @@ import { Router } from "express";
 import { AuthController } from "./auth.controller";
 import { Validate, validate } from "class-validator";
 import { RegisterDTO } from "./dto/register.dto";
-import { validateBody } from "../middlewares/validation.middleware";
+import { validateBody } from "../../middlewares/validation.middleware";
 import { LoginDTO } from "./dto/login.dto";
 import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
 import { ResetPasswordDTO } from "./dto/reset-password.dto";
-import { JwtMiddleware } from "../middlewares/jwt.middleware";
+import { JwtMiddleware } from "../../middlewares/jwt.middleware";
 import { UpdateUserDTO } from "./dto/update-user.dto";
 import { UploaderMiddleware } from "../middlewares/uploader.middleware";
 

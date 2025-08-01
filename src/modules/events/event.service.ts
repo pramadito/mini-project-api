@@ -86,7 +86,6 @@ export class EventService {
         startDate: new Date(body.startDate),
         endDate: new Date(body.endDate),
         description: body.description,
-        price: body.price,
         title: body.title,
       },
     });

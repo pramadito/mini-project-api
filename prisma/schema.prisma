@@ -29,11 +29,9 @@ model User {
   points          Point[]
   coupons         Coupon[]
   organizedEvents Event[]       @relation("OrganizedEvents")
-  tickets         Ticket[]
-  transactions    Transaction[]   @relation("UserTransactions")
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  transaction     Transaction[]
 
   @@map("users")
 }
@@ -66,7 +64,7 @@ model Coupon {
 }
 
 model Event {
-  id             Int           @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
   title          String
   slug           String
   description    String
@@ -74,49 +72,65 @@ model Event {
   startDate      DateTime
   endDate        DateTime
   organizerId    Int
-  organizer      User          @relation(fields: [organizerId], references: [id], name: "OrganizedEvents")
+  organizer      User     @relation(fields: [organizerId], references: [id], name: "OrganizedEvents")
   tickets        Ticket[]
   totalSeats     Int
   availableSeats Int
-  price          Float
-  category       String
-  imageUrl       String?
-  isPublished    Boolean       @default(false)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  transactions   Transaction[] @relation("EventTransactions")
+
+  category     String
+  imageUrl     String?
+  isPublished  Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[] @relation("EventTransactions")
 
   @@map("events")
 }
 
 model Ticket {
-  id         Int      @id @default(autoincrement())
-  eventId    Int
-  event      Event    @relation(fields: [eventId], references: [id])
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id])
-  quantity   Int
-  totalPrice Float
-  createdAt  DateTime @default(now())
+  id                Int                 @id @default(autoincrement())
+  eventId           Int
+  event             Event               @relation(fields: [eventId], references: [id])
+  stock             Int
+  totalPrice        Float
+  createdAt         DateTime            @default(now())
+  TransactionDetail TransactionDetail[]
 
   @@map("tickets")
 }
 
 model Transaction {
-  id           Int               @id @default(autoincrement())
-  userId       Int
-  user         User              @relation(fields: [userId], references: [id], name: "UserTransactions")
-  eventId      Int
-  event        Event             @relation(fields: [eventId], references: [id], name: "EventTransactions")
-  amount       Float
-  status       TransactionStatus @default(WAITING_FOR_PAYMENT)
-  paymentProof String?
-  couponUsed   String?
-  pointsUsed   Int?
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  id      Int    @id @default(autoincrement())
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
+  eventId Int
+  event   Event  @relation(fields: [eventId], references: [id], name: "EventTransactions")
+  uuid    String @unique @default(uuid())
+
+  status            TransactionStatus   @default(WAITING_FOR_PAYMENT)
+  paymentProof      String?
+  couponUsed        String?
+  pointsUsed        Int?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  TransactionDetail TransactionDetail[]
 
   @@map("transactions")
+}
+
+model TransactionDetail {
+  id Int @id @default(autoincrement())
+
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  ticketId      Int
+  ticket        Ticket      @relation(fields: [ticketId], references: [id])
+  qty           Int
+  price         Int
+  createdAt     DateTime    @default(now())
+  updateAt      DateTime    @updatedAt
+
+  @@map("transaction_details")
 }
 
 enum Role {

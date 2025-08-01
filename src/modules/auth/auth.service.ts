@@ -1,10 +1,10 @@
-import { ApiError } from "../utils/api-error";
-import { JwtService } from "../modules/jwt/jwt.service";
-import { PasswordService } from "../modules/password/password.service";
-import { PrismaService } from "../modules/prisma/prisma.service";
+import { ApiError } from "../../utils/api-error";
+import { JwtService } from "../jwt/jwt.service";
+import { PasswordService } from "../password/password.service";
+import { PrismaService } from "../prisma/prisma.service";
 import { LoginDTO } from "./dto/login.dto";
 import { RegisterDTO } from "./dto/register.dto";
-import { MailService } from "../modules/mail/mail.service";
+import { MailService } from "../mail/mail.service";
 import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
 import { ResetPasswordDTO } from "./dto/reset-password.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
@@ -146,7 +146,7 @@ export class AuthService {
       throw new ApiError("Invalid password", 400);
     }
 
-    const payload = { id: user.id };
+    const payload = { id: user.id, role: user.role };
     const accessToken = await this.jwtService.generateToken(
       payload,
       process.env.JWT_SECRET!,
