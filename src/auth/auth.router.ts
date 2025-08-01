@@ -8,16 +8,19 @@ import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
 import { ResetPasswordDTO } from "./dto/reset-password.dto";
 import { JwtMiddleware } from "../middlewares/jwt.middleware";
 import { UpdateUserDTO } from "./dto/update-user.dto";
+import { UploaderMiddleware } from "../middlewares/uploader.middleware";
 
 export class AuthRouter {
   private router: Router;
   private authController: AuthController;
   private jwtMiddleware: JwtMiddleware;
+  private uploaderMiddleware: UploaderMiddleware;
 
   constructor() {
     this.router = Router();
     this.authController = new AuthController();
     this.jwtMiddleware = new JwtMiddleware();
+    this.uploaderMiddleware = new UploaderMiddleware();
     this.initializedRoutes();
   }
 
@@ -46,6 +49,8 @@ export class AuthRouter {
     this.router.patch(
       "/update-user",
       this.jwtMiddleware.verifyToken(process.env.JWT_SECRET!),
+      this.uploaderMiddleware.upload().fields([{name: "profilePicture", maxCount: 1}]), // 3
+      this.uploaderMiddleware.fileFilter(["image/jpeg", "image/png" , "image/avif", "image/webp"]),
       validateBody(UpdateUserDTO),
       this.authController.updateUser
     );
