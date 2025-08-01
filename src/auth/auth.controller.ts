@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { AuthService } from "./auth.service";
+import { ApiError } from "../utils/api-error";
 
 export class AuthController {
   private authService: AuthService;
@@ -29,8 +30,13 @@ export class AuthController {
   };
   updateUser = async (req: Request, res: Response) => {
     const authUserId = res.locals.user.id;
-    const result = await this.authService.updateUser(req.body, authUserId);
+    const files = req.files as { [field: string]: Express.Multer.File[] };
+    const profilePicture = files.profilePicture?.[0];
+    const result = await this.authService.updateUser(
+      req.body,
+      profilePicture,
+      authUserId
+    );
     res.status(200).send(result);
   };
- 
 }

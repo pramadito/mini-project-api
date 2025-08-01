@@ -8,17 +8,23 @@ import { MailService } from "../modules/mail/mail.service";
 import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
 import { ResetPasswordDTO } from "./dto/reset-password.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
+import { CloudinaryService } from "../modules/cloudinary/cloudinary.service";
+import { User } from "../generated/prisma";
+
 
 export class AuthService {
   private prisma: PrismaService;
   private passwordService: PasswordService;
   private jwtService: JwtService;
   private mailService: MailService;
+  private cloudinaryService: CloudinaryService;
+
   constructor() {
     this.prisma = new PrismaService();
     this.passwordService = new PasswordService();
     this.jwtService = new JwtService();
     this.mailService = new MailService();
+    this.cloudinaryService = new CloudinaryService();
   }
 
   private generateReferralCode(): string {
@@ -205,23 +211,34 @@ export class AuthService {
     return { message: "reset password success" };
   };
 
-  updateUser = async (body: Partial<UpdateUserDTO>, authUserId: number) => {
-     // Create update data object with only the fields that are provided
-    const updateData: Partial<UpdateUserDTO> = {};
-    
+  updateUser = async (
+    body: Partial<UpdateUserDTO>,
+    profilePicture: Express.Multer.File,
+    authUserId: number
+  ) => {
+    // Create update data object with only the fields that are provided
+    const updateData: Partial<User> = {};
+
     // Only include fields that are actually provided in the body
     if (body.name !== undefined) updateData.name = body.name;
     if (body.email !== undefined) updateData.email = body.email;
-    if (body.profilePicture !== undefined) updateData.profilePicture = body.profilePicture;
-    
+    if (profilePicture !== undefined) {
+      const updatedProfilePicture = await this.cloudinaryService.upload(
+        profilePicture
+      );
+      updateData.profilePicture = updatedProfilePicture.secure_url;
+    }
+
     // Handle password separately
     if (body.password !== undefined) {
-      updateData.password = await this.passwordService.hashPassword(body.password);
+      updateData.password = await this.passwordService.hashPassword(
+        body.password
+      );
     }
 
     const updatedUser = await this.prisma.user.update({
       where: { id: authUserId },
-      data: updateData,
+      data: { ...updateData },
       select: {
         id: true,
         name: true,
