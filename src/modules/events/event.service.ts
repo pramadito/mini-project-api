@@ -47,6 +47,7 @@ export class EventService {
   getEventBySlug = async (slug: string) => {
     const event = await this.prisma.event.findFirst({
       where: { slug },
+      include:{tickets: true}
     });
 
     if (!event) {
@@ -70,10 +71,9 @@ export class EventService {
     }
 
     const slug = generateSlug(body.title);
-
     const { secure_url } = await this.cloudinaryService.upload(thumbnail);
 
-    return await this.prisma.event.create({
+     await this.prisma.event.create({
       data: {
         ...body,
         imageUrl: secure_url,
@@ -89,5 +89,6 @@ export class EventService {
         title: body.title,
       },
     });
+      return { message: "Create event success" };
   };
 }

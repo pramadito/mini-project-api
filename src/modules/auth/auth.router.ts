@@ -8,7 +8,8 @@ import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
 import { ResetPasswordDTO } from "./dto/reset-password.dto";
 import { JwtMiddleware } from "../../middlewares/jwt.middleware";
 import { UpdateUserDTO } from "./dto/update-user.dto";
-import { UploaderMiddleware } from "../middlewares/uploader.middleware";
+import { UploaderMiddleware } from "../../middlewares/uploader.middleware";
+
 
 export class AuthRouter {
   private router: Router;
