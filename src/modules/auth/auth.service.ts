@@ -8,8 +8,9 @@ import { MailService } from "../mail/mail.service";
 import { ForgotPasswordDTO } from "./dto/forgot-password.dto";
 import { ResetPasswordDTO } from "./dto/reset-password.dto";
 import { UpdateUserDTO } from "./dto/update-user.dto";
-import { CloudinaryService } from "../modules/cloudinary/cloudinary.service";
-import { User } from "../generated/prisma";
+import { CloudinaryService } from "../cloudinary/cloudinary.service";
+import { User } from "../../generated/prisma";
+
 
 
 export class AuthService {

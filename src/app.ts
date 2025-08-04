@@ -7,6 +7,8 @@ import { errorMiddleware } from "./middlewares/error.middleware";
 import { EventRouter } from "./modules/events/event.router";
 import { SampleRouter } from "./modules/sample/sample.router";
 import { TransactionRouter } from "./modules/transaction/transaction.router";
+import { TicketRouter } from "./modules/ticket/ticket.router";
+import { VoucherRouter } from "./modules/voucher/voucher.router";
 
 export class App {
   app: Express;
@@ -28,11 +30,15 @@ export class App {
     const eventRouter = new EventRouter();
     const authRouter = new AuthRouter();
     const transactionRouter = new TransactionRouter();
+    const ticketRouter = new TicketRouter();
+    const voucherRouter = new VoucherRouter();
 
     this.app.use("/sample", sampleRouter.getRoutes());
     this.app.use("/auth", authRouter.getRouter());
     this.app.use("/events", eventRouter.getRouter());
     this.app.use("/transactions", transactionRouter.getRouter());
+    this.app.use("/tickets", ticketRouter.getRouter());
+    this.app.use("/vouchers", voucherRouter.getRouter());
   }
 
   private handleError() {
