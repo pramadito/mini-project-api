@@ -11,8 +11,6 @@ import { UpdateUserDTO } from "./dto/update-user.dto";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { User } from "../../generated/prisma";
 
-
-
 export class AuthService {
   private prisma: PrismaService;
   private passwordService: PasswordService;
@@ -247,14 +245,22 @@ export class AuthService {
         profilePicture: true,
         createdAt: true,
         updatedAt: true,
+
         // Include other fields you want to return
         // Explicitly exclude password and other sensitive fields
       },
     });
 
+    const payload = { id: updatedUser.id };
+    const accessToken = this.jwtService.generateToken(
+      payload,
+      process.env.JWT_SECRET!,
+      { expiresIn: "2h" }
+    );
+
     return {
-      message: "User updated successfully",
-      data: updatedUser,
+      ...updatedUser,
+      accessToken,
     };
   };
 }
