@@ -268,8 +268,8 @@ export class AuthService {
     };
     
 
-    const {  ...userWithoutPassword } = updatedUser;
-    return { ...userWithoutPassword, accessToken };
+    // const {  ...userWithoutPassword } = updatedUser;
+    // return { ...userWithoutPassword, accessToken };
 
   };
 }
