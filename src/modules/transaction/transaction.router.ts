@@ -6,6 +6,8 @@ import { CreateTransactionDTO } from "./dto/create-transaction.dto";
 import { UpdateTransactionDTO } from "./dto/update-transaction.dto";
 import { uploadPaymentProofDTO } from "./dto/upload-payment-proof.dto";
 import { TransactionController } from "./transaction.controller";
+import { get } from "http";
+import { GetTransactionDTO } from "./dto/get-transaction.dto";
 
 export class TransactionRouter {
   private router: Router;
@@ -50,6 +52,13 @@ export class TransactionRouter {
       this.jwtMiddleWare.verifyRole(["ORGANIZER"]),
       validateBody(UpdateTransactionDTO),
       this.transactionController.updateTransaction
+    );
+    this.router.get(
+      '/',
+      this.jwtMiddleWare.verifyToken(process.env.JWT_SECRET!),
+      this.jwtMiddleWare.verifyRole(["ORGANIZER"]),// Requires valid JWT token
+      validateBody(GetTransactionDTO),
+      this.transactionController.getTransactionsOrganizer
     );
   };
 
