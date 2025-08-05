@@ -249,11 +249,23 @@ export class AuthService {
         updatedAt: true,
 
 
+
         // Include other fields you want to return
         // Explicitly exclude password and other sensitive fields
       },
     });
 
+    const payload = { id: updatedUser.id };
+    const accessToken = this.jwtService.generateToken(
+      payload,
+      process.env.JWT_SECRET!,
+      { expiresIn: "2h" }
+    );
+
+    return {
+      ...updatedUser,
+      accessToken,
+    };
     
 
     const {  ...userWithoutPassword } = updatedUser;
