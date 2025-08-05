@@ -255,12 +255,12 @@ export class AuthService {
       },
     });
 
-    const payload = { id: updatedUser.id };
-    const accessToken = this.jwtService.generateToken(
-      payload,
-      process.env.JWT_SECRET!,
-      { expiresIn: "2h" }
-    );
+    // const payload = { id: updatedUser.id };
+    // const accessToken = this.jwtService.generateToken(
+    //   payload,
+    //   process.env.JWT_SECRET!,
+    //   { expiresIn: "2h" }
+    // );
 
     return {
       ...updatedUser,
