@@ -3,6 +3,11 @@ import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { MailService } from "../mail/mail.service";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateTransactionDTO } from "./dto/create-transaction.dto";
+import {
+  GetTransactionDTO,
+  TransactionResponse,
+  TransactionStatus,
+} from "./dto/get-transaction.dto";
 import { UpdateTransactionDTO } from "./dto/update-transaction.dto";
 import { TransactionQueue } from "./transaction.queue";
 
@@ -54,14 +59,12 @@ export class TransactionService {
     const result = await this.prisma.$transaction(async (tx) => {
       // 4. buat data Transaction
       const transaction = await tx.transaction.create({
-        data: { 
+        data: {
           userId: authUserId,
           status: "WAITING_FOR_PAYMENT",
           eventId: 1,
-          },
-        include:{user:true}
-          
-
+        },
+        include: { user: true },
       });
 
       // 5. prepare data transactionDetail
@@ -135,7 +138,7 @@ export class TransactionService {
     const { secure_url } = await this.cloudinaryService.upload(paymentProof);
 
     await this.prisma.transaction.update({
-      where: {  uuid: uuid },
+      where: { uuid: uuid },
       data: { paymentProof: secure_url, status: "WAITING_FOR_CONFIRMATION" },
     });
 
@@ -183,5 +186,38 @@ export class TransactionService {
     return { message: "accept transaction success" };
   };
 
-  rejectTransaction = async () => {};
+  getTransactionsOrganizer = async (
+    body: GetTransactionDTO,
+    authUserId: number
+  ) => {
+    // find all transaction with organizerId
+    const transactions = await this.prisma.transaction.findMany({
+      where: {
+        event: {
+          organizerId: body.userId,
+        },
+      },
+      include: {
+        event: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            profilePicture: true,
+            role: true,
+            // Explicitly list all fields EXCEPT password
+          },
+        },
+        TransactionDetail: {
+          include: {
+            ticket: true,
+          },
+        },
+      },
+    });
+
+
+    return transactions;
+  };
 }

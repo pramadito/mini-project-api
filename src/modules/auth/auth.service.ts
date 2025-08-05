@@ -111,15 +111,6 @@ export class AuthService {
         });
       }
 
-      // // Generate JWT token for immediate login
-      // const payload = { id: newUser.id };
-      // const accessToken = await this.jwtService.generateToken(
-      //   payload,
-      //   process.env.JWT_SECRET_KEY!,
-      //   { expiresIn: "1d" }
-      // );
-
-      // Return user without password and with access token
       const { password, ...userWithoutPassword } = newUser;
       return userWithoutPassword;
     });
@@ -228,16 +219,27 @@ export class AuthService {
       updateData.profilePicture = updatedProfilePicture.secure_url;
     }
 
+    let hashedPassword: string | undefined;
     // Handle password separately
     if (body.password !== undefined) {
-      updateData.password = await this.passwordService.hashPassword(
-        body.password
-      );
+      hashedPassword = await this.passwordService.hashPassword(
+      body.password
+    );
     }
+
+   
+
+    const payload = { id: updateData.id };
+    const accessToken = this.jwtService.generateToken(
+      payload,
+      process.env.JWT_SECRET!,
+      { expiresIn: "2h" }
+    );
+
 
     const updatedUser = await this.prisma.user.update({
       where: { id: authUserId },
-      data: { ...updateData },
+      data: { ...updateData, password: hashedPassword },
       select: {
         id: true,
         name: true,
@@ -246,21 +248,28 @@ export class AuthService {
         createdAt: true,
         updatedAt: true,
 
+
+
         // Include other fields you want to return
         // Explicitly exclude password and other sensitive fields
       },
     });
 
-    const payload = { id: updatedUser.id };
-    const accessToken = this.jwtService.generateToken(
-      payload,
-      process.env.JWT_SECRET!,
-      { expiresIn: "2h" }
-    );
+    // const payload = { id: updatedUser.id };
+    // const accessToken = this.jwtService.generateToken(
+    //   payload,
+    //   process.env.JWT_SECRET!,
+    //   { expiresIn: "2h" }
+    // );
 
     return {
       ...updatedUser,
       accessToken,
     };
+    
+
+    // const {  ...userWithoutPassword } = updatedUser;
+    // return { ...userWithoutPassword, accessToken };
+
   };
 }
